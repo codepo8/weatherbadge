@@ -1,0 +1,89 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN"
+ "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">  
+  <title>Display the local weather with a simple badge</title>
+  <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" type="text/css">
+  <link rel="stylesheet" href="http://yui.yahooapis.com/2.7.0/build/base/base.css" type="text/css">
+  <style type="text/css" media="screen">
+  html,body{background:#666;color:#000;}
+  textarea{width:725px;padding:10px;margin:1em 0;border:2px solid #999;height:2em;}
+  label{padding-right:1em;font-weight:bold;}
+  input[type=submit]{margin-left:1em;}
+  h2{color:#369;}
+  h1{color:#036;margin:0;}
+  #doc{background:#fff;border:1em solid #fff;-moz-border-radius:5px;font-family:calibri,helvetica,arial,sans-serif;}
+  #message{font-weight:bold;margin:1em 0;color:#090;}
+  form div.bar{border:2px solid #69c;-moz-border-radius:5px;background:#eef;padding:5px;}
+  #badge{position:absolute;left:-9000px;}
+  p,li{font-family:arial,sans-serif;}
+  p a{color:#333;}
+  #ft p{font-size:80%;font-weight:bold;text-align:right;padding-top:3em;}
+  </style>
+</head>
+<body>
+<div id="doc" class="yui-t7">
+  <div id="hd" role="banner"><h1>Display the local weather with a simple badge</h1></div>
+  <div id="bd" role="main">
+
+   <div class="yui-g">
+     <div class="yui-u first"><h2>What is this?</h2>
+       <p>Here's a solution if you always wanted to display the local weather on your web site, blog or other web document but you don't want to install Plug-Ins or read up on documentation how to do that.</p>
+       <p>If you want a badge like the one on your right, simply enter your information in the form below and hit the "generate" button.</p>
+       <p>Then copy and paste the code that gets generated into any HTML document and it will display your weather.</p>
+       </div>
+     <div class="yui-u">  <h2>Demo Badge</h2>
+       <script type="text/javascript" src="weather.js">city:melbourne,units:c,styling:true</script>
+     </div>
+   </div>
+
+<h2>Create your own badge</h2>
+<form id="maker">
+  <div class="bar">
+    <label for="location">Your City:</label>
+    <input type="text" id="location">
+    <input type="radio" name="unit" value="c" id="ce" checked="checked"><label for="ce"> Use Celsius</label>
+    <input type="radio" name="unit" value="f" id="fa"><label for="fa"> Use Fahrenheit</label>
+    <input type="checkbox" name="style" id="st"><label for="st"> Don't apply any styling</label>
+    <input type="submit" value="generate"></div><div id="message"></div>
+  <div><textarea id="badge" rows="8" cols="40"></textarea></div>
+</form>
+
+        <h2>How does this work?</h2>
+        <p>The weather information displayed in the badge is provided by <a href="http://weather.com">The Weather Channel</a> and Yahoo makes it available for developers as <a href="http://developer.yahoo.com/weather/">weather feeds</a>.</p>
+        <p>This solution uses these feed (and some other Yahoo tools) to make it easy for you to show the local weather without needing to know any programming. Please also check the <a href="http://developer.yahoo.com/weather/#terms">Terms and Conditions of the weather feeds</a> before using this commercially.</p>
+
+       <h2>Developers, here's your information&hellip;</h2>
+        <p>As you can see from the generated code, all you need to do to display a badge is add the script with a few parameters into your page:</p>
+        <pre><code>&lt;script src=&quot;weather.js&quot;&gt;city:melbourne,units:c,styling:true&lt;/script&gt;</code></pre>
+<p>So say, you'd want the badge to show New York, in Fahrenheit and without any styles, you simple use the following:</p>
+        <pre><code>&lt;script src=&quot;weather.js&quot;&gt;city:nyc,units:f,styling:false&lt;/script&gt;</code></pre>       
+<p>The <a href="http://github.com/codepo8/weatherbadge">source code of the badge is available on GitHub</a> in case you want to host the files yourself.</p>
+
+<p>Under the hood, a lot of YQL magic happens and I explained that in detail <a href="http://developer.yahoo.net/blog/archives/2009/12/extending_the_weather_api_with_yql.html">in this blog post</a> on the Yahoo Developer Network blog.</p>
+  </div>
+  <div id="ft" role="contentinfo"><p>Written by <a href="http://icant.co.uk">Chris Heilmann</a>, powered by <a href="http://developer.yahoo.com/weather">the Yahoo Weather API</a>, <a href="http://developer.yahoo.com/yql">YQL</a> and <a href="http://developer.yahoo.com/yui">YUI</a>.</p></div>
+</div>
+<script type="text/javascript" charset="utf-8">
+  document.getElementById('maker').onsubmit=function(){
+    var m = document.getElementById('message');
+    m.innerHTML = '';
+    var ba = document.getElementById('badge');
+    var u = document.getElementById('ce').checked ? 'c' : 'f';
+    var s = document.getElementById('st').checked ? 'false' : 'true';
+    var loc = encodeURIComponent(document.getElementById('location').value);
+    var code = '<sc'+'ript type="text/javascript" src="http://isithackday.com/weatherbadge/weather.js">city:'+loc+',units:'+u+',styling:'+s+'</scr'+'ipt>';
+    var apisrc = "http://query.yahooapis.com/v1/public/yql?q=use%20'http%3A%2F%2Fisithackday.com%2Fweatherbadge%2Fweather.bylocation.xml'%20as%20we%3Bselect%20*%20from%20we%20where%20location%3D%22"+loc+"%22%20and%20unit%3D'"+u+"'&format=json&callback=yahooweatherbadge.weather";
+    m.innerHTML = 'Here you go. Below is your code for copy and paste. Above you see a preview of the badge (the styling is always applied). Make sure that there is a good result before copying the code.';
+    ba.style.position='relative';
+    ba.style.left='0';
+    var s = document.createElement('script');
+    s.src=apisrc;
+    document.getElementsByTagName('head')[0].appendChild(s);
+    ba.value = code;
+      return false
+  };
+</script>
+</body>
+</html>
